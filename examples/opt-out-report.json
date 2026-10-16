@@ -1,0 +1,6 @@
+{
+  "message": {
+    "type": "end-of-call-report", "call": { "id": "call_demo_002" },
+    "analysis": { "structuredData": { "caller_name": "Alex Demo", "phone_number": "+15550111111", "reason_for_call": "No interest", "do_not_call": true } }
+  }
+}

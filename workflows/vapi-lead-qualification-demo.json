@@ -1,0 +1,19 @@
+{
+  "name": "Vapi Call Summary to CRM-Ready Lead (Demo)",
+  "nodes": [
+    {
+      "parameters": {"httpMethod": "POST", "path": "vapi-lead-qualification-demo", "responseMode": "responseNode", "options": {}},
+      "id": "eec3d4b3-1390-4b1a-a31a-8f9d0c1d0010", "name": "Vapi Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [240,300], "webhookId": "vapi-lead-qualification-demo"
+    },
+    {
+      "parameters": {"jsCode": "const body = $input.first().json.body ?? $input.first().json;\nconst message = body.message ?? body;\nconst type = message.type ?? body.type ?? '';\nif (type !== 'end-of-call-report') { return [{json:{accepted:false,reason:'Expected end-of-call-report',eventType:type}}]; }\nconst call = message.call ?? {};\nconst structured = message.analysis?.structuredData ?? message.structuredData ?? {};\nconst str = value => value == null ? '' : String(value).trim();\nconst name = str(structured.caller_name ?? structured.name);\nconst email = str(structured.email).toLowerCase();\nconst phone = str(structured.phone_number ?? structured.phone ?? call.customer?.number);\nconst interest = str(structured.interest ?? structured.reason_for_call);\nconst requested = Boolean(structured.appointment_requested ?? structured.wants_appointment);\nconst doNotCall = Boolean(structured.do_not_call ?? structured.opt_out);\nconst validEmail = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);\nconst qualified = !doNotCall && Boolean(name) && (validEmail || Boolean(phone)) && Boolean(interest);\nreturn [{json:{accepted:true,source:'vapi',eventType:type,callId:str(call.id ?? message.callId),lead:{name,email:validEmail?email:'',phone,interest,appointmentRequested:requested,doNotCall},qualification:{qualified,reason:doNotCall?'Opted out':qualified?'Contact information and interest provided':'Missing contact information or interest'},crmPayload:{external_call_id:str(call.id ?? message.callId),full_name:name,email:validEmail?email:'',phone,notes:interest,status:doNotCall?'do_not_contact':qualified?'qualified':'needs_review',appointment_requested:requested},demo:true}}];"},
+      "id": "4e4e1cb9-8e82-4c6d-b98f-528ccbb71388", "name": "Normalize and Qualify Lead", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [500,300]
+    },
+    {
+      "parameters": {"respondWith": "json", "responseBody": "={{ JSON.stringify({ received: true, accepted: $json.accepted, callId: $json.callId ?? null, qualified: $json.qualification?.qualified ?? false }) }}", "options": {"responseCode": 200}},
+      "id": "79f33366-0185-454e-b76f-561a69d9a9e9", "name": "Acknowledge Event", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [760,300]
+    }
+  ],
+  "connections": {"Vapi Webhook": {"main": [[{"node": "Normalize and Qualify Lead", "type": "main", "index": 0}]]}, "Normalize and Qualify Lead": {"main": [[{"node": "Acknowledge Event", "type": "main", "index": 0}]]}},
+  "active": false, "settings": {"executionOrder": "v1"}, "pinData": {}, "tags": []
+}

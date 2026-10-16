@@ -1,0 +1,11 @@
+{
+  "message": {
+    "type": "end-of-call-report",
+    "call": { "id": "call_demo_001", "customer": { "number": "+15550123456" } },
+    "analysis": { "structuredData": {
+      "caller_name": "Jordan Lee", "email": "jordan@example.com",
+      "phone_number": "+15550123456", "reason_for_call": "Wants to learn about appointment scheduling automation",
+      "appointment_requested": true, "do_not_call": false
+    } }
+  }
+}

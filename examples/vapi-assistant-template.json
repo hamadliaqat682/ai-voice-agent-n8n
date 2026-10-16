@@ -1,0 +1,10 @@
+{
+  "name": "Lead Qualification Demo Assistant",
+  "firstMessage": "Hello! I'm a virtual assistant calling about your inquiry. Is now a good time?",
+  "model": {
+    "provider": "openai", "model": "gpt-4o-mini",
+    "messages": [{"role": "system", "content": "You are a demo business assistant. Clearly identify yourself as an AI assistant. Ask only relevant qualification questions, confirm contact preferences, and never invent availability or promise an appointment. If the person declines calls or asks to opt out, acknowledge immediately, stop the conversation, and record do_not_call=true. Do not attempt to persuade them after opting out. Collect name, preferred callback contact, interest, and whether an appointment is requested. Respect applicable calling consent and privacy requirements."}]
+  },
+  "analysisPlan": {"structuredDataPrompt": "Return caller_name, email, phone_number, reason_for_call, appointment_requested, and do_not_call from the conversation. Do not invent missing details.", "structuredDataSchema": {"type":"object", "properties":{"caller_name":{"type":"string"},"email":{"type":"string"},"phone_number":{"type":"string"},"reason_for_call":{"type":"string"},"appointment_requested":{"type":"boolean"},"do_not_call":{"type":"boolean"}}}},
+  "serverMessages": ["end-of-call-report"]
+}
