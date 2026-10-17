@@ -1,3 +1,7 @@
+
+![JSON Validation](https://github.com/hamadliaqat682/ai-voice-agent-n8n/actions/workflows/validate.yml/badge.svg)
+
+
 # AI Voice Agent & CRM-Ready Lead Qualification | Vapi + n8n
 
 An importable n8n workflow demonstrating how a Vapi **end-of-call-report** event can become normalized, CRM-ready lead data. Includes fictional sample calls, an illustrative assistant configuration, and local JSON validation.
