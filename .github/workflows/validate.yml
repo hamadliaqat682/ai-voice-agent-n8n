@@ -1,0 +1,39 @@
+
+name: Validate AI Voice Agent JSON
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate JSON files
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = sorted(Path(".").rglob("*.json"))
+
+          if not files:
+              raise SystemExit("No JSON files found.")
+
+          for file in files:
+              with file.open(encoding="utf-8") as f:
+                  json.load(f)
+              print(f"VALID: {file}")
+
+          print(f"Successfully validated {len(files)} JSON files.")
+          PY
